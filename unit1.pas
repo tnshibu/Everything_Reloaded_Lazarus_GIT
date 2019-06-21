@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  strutils,
   ComCtrls, FileUnit;
 
 type
@@ -34,31 +35,44 @@ implementation
 { TForm1 }
 
 procedure TForm1.txt_SearchChange(Sender: TObject);
-begin
-end;
-
-procedure TForm1.FormCreate(Sender: TObject);
 var
   fileDataArray : TFileDataArray;
   i : integer;
   vNewItem: TListItem;
+  searchText : String;
+  temp : String;
+  nameOnly : String;
+  position1 : integer;
+begin
+     searchText := uppercase(txt_Search.Text);
+     if(Length(txt_Search.Text) > 3) then
+     begin
+          fileDataArray := FileUnit.ReadFile ('a.txt');
+          ListView1.BeginUpdate;
+          ListView1.Clear;
+          ListView1.ReadOnly:=True;
+          for i:=1 to 400 do
+          begin
+            if( AnsiContainsText(fileDataArray[i].name, searchText)) then
+            begin
+                 temp := fileDataArray[i].name;
+                 position1 := rpos('\',temp)+1;
+                 nameOnly := ExtractSubstr(temp, position1,[' ']);
+                 vNewItem := ListView1.Items.Add;
+                 vNewItem.Caption:=nameOnly; //first column
+                 vNewItem.SubItems.Add(fileDataArray[i].size); //second column
+                 vNewItem.SubItems.Add(fileDataArray[i].name); //third column
+            end;
+          end;
+          ListView1.EndUpdate;
+     end
+end;
 
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  i : integer;
 begin
      Caption:='Everything Reloaded';
-     fileDataArray := FileUnit.ReadFile ('a.txt');
-
-     ListView1.ViewStyle:=vsIcon;
-     ListView1.ReadOnly:=True;
-     ListView1.BeginUpdate;
-
-     for i:=1 to 40000 do
-     begin
-       vNewItem := ListView1.Items.Add;
-       vNewItem.Caption:=fileDataArray[i].name; //first column
-       vNewItem.SubItems.Add(fileDataArray[i].size); //next column
-     end;
-     ListView1.EndUpdate;
-     ListView1.ViewStyle:=vsReport;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);

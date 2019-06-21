@@ -38,6 +38,7 @@ type
     procedure sysTray_ShowClick(Sender: TObject);
     procedure TrayIcon1Click(Sender: TObject);
     procedure txt_SearchChange(Sender: TObject);
+    procedure txt_SearchKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
 
   public
@@ -89,6 +90,14 @@ begin
      end
 end;
 
+procedure TForm1.txt_SearchKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+    ListView1.SetFocus;
+  end;
+end;
+
 procedure TForm1.FormCreate(Sender: TObject);
 begin
      Caption:='Everything Reloaded';
@@ -108,10 +117,6 @@ begin
     begin
          Hide;
     end
-    else if Key = VK_DOWN then
-    begin
-      //showmessage('down');
-    end;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);

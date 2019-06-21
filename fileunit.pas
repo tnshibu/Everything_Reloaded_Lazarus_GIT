@@ -38,6 +38,8 @@ begin
        fileDataArray[counter-1].size:=Result1[1];
        fileDataArray[counter-1].path:=Result1[0];
        counter:=counter+1;
+       If counter>=4500 Then
+          Break;
   end;
   ReadFile:=fileDataArray;
 end;

@@ -8,6 +8,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   strutils,
   LCLType,
+  RegExpr,
   ComCtrls, Menus, ExtCtrls, FileUnit;
 
 type
@@ -32,6 +33,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormResize(Sender: TObject);
+    procedure menu_ExitClick(Sender: TObject);
     procedure sysTray_ExitClick(Sender: TObject);
     procedure sysTray_ShowClick(Sender: TObject);
     procedure TrayIcon1Click(Sender: TObject);
@@ -60,11 +62,13 @@ var
   temp : String;
   nameOnly : String;
   position1 : integer;
+  //regex: TRegExpr;
 begin
-     searchText := uppercase(txt_Search.Text);
      if(Length(txt_Search.Text) > 3) then
      begin
+          searchText := uppercase(txt_Search.Text);
           fileDataArray := FileUnit.ReadFile ('a.txt');
+          //regex := TRegExpr.Create('.*'+searchText +'.*');
           ListView1.BeginUpdate;
           ListView1.Clear;
           ListView1.ReadOnly:=True;
@@ -86,8 +90,6 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var
-  i : integer;
 begin
      Caption:='Everything Reloaded';
      Application.Title:=Caption;
@@ -121,6 +123,11 @@ begin
      listView1.Column[0].Width:=200;  //file name
      listView1.Column[1].Width:=50;   //file size
      listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 5;
+end;
+
+procedure TForm1.menu_ExitClick(Sender: TObject);
+begin
+  Destroy;
 end;
 
 procedure TForm1.sysTray_ExitClick(Sender: TObject);

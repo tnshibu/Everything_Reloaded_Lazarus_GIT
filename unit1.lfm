@@ -488,6 +488,7 @@ object Form1: TForm1
       object menu_Exit: TMenuItem
         Caption = '&Exit'
         ShortCut = 16465
+        OnClick = menu_ExitClick
       end
     end
     object menu_Help: TMenuItem

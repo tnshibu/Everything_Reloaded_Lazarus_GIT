@@ -7,17 +7,34 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
   strutils,
-  ComCtrls, FileUnit;
+  LCLType,
+  ComCtrls, Menus, ExtCtrls, FileUnit;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    Image1: TImage;
     ListView1: TListView;
+    menuBar: TMainMenu;
+    sysTray_Show: TMenuItem;
+    sysTray_Exit: TMenuItem;
+    menu_Help: TMenuItem;
+    menu_About: TMenuItem;
+    menu_File: TMenuItem;
+    menu_Options: TMenuItem;
+    menu_Exit: TMenuItem;
+    sysTray_Popup_Menu: TPopupMenu;
+    StatusBar1: TStatusBar;
+    TrayIcon1: TTrayIcon;
     txt_Search: TEdit;
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormResize(Sender: TObject);
+    procedure sysTray_ExitClick(Sender: TObject);
+    procedure sysTray_ShowClick(Sender: TObject);
+    procedure TrayIcon1Click(Sender: TObject);
     procedure txt_SearchChange(Sender: TObject);
   private
 
@@ -73,6 +90,25 @@ var
   i : integer;
 begin
      Caption:='Everything Reloaded';
+     Application.Title:=Caption;
+     Application.Icon:=Icon;
+
+     TrayIcon1.PopUpMenu:=sysTray_Popup_Menu;
+     TrayIcon1.Icon:=Icon;
+     TrayIcon1.Show;
+end;
+
+procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+    if Key =  VK_ESCAPE then
+    begin
+//      Application.Minimize;
+         Hide;
+    end
+    else if Key = VK_DOWN then
+    begin
+      showmessage('down');
+    end;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -81,11 +117,28 @@ begin
      txt_Search.Width:=Width - 10;
      listView1.Left:=5;
      listView1.Width:=Width - 10;
-     listView1.Height:=Height - 45;
+     listView1.Height:=Height - 85;
 
      listView1.Column[0].Width:=200;
      listView1.Column[1].Width:=200;
      listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 5;
 end;
+
+procedure TForm1.sysTray_ExitClick(Sender: TObject);
+begin
+  Destroy;
+end;
+
+procedure TForm1.TrayIcon1Click(Sender: TObject);
+begin
+  Show;
+end;
+
+procedure TForm1.sysTray_ShowClick(Sender: TObject);
+begin
+  Show;
+end;
+
+
 end.
 

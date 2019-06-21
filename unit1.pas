@@ -68,17 +68,17 @@ begin
           ListView1.BeginUpdate;
           ListView1.Clear;
           ListView1.ReadOnly:=True;
-          for i:=1 to 400 do
+          for i:=0 to length(fileDataArray) do
           begin
-            if( AnsiContainsText(fileDataArray[i].name, searchText)) then
+            if( AnsiContainsText(fileDataArray[i].path, searchText)) then
             begin
-                 temp := fileDataArray[i].name;
+                 temp := fileDataArray[i].path;
                  position1 := rpos('\',temp)+1;
                  nameOnly := ExtractSubstr(temp, position1,[' ']);
                  vNewItem := ListView1.Items.Add;
                  vNewItem.Caption:=nameOnly; //first column
                  vNewItem.SubItems.Add(fileDataArray[i].size); //second column
-                 vNewItem.SubItems.Add(fileDataArray[i].name); //third column
+                 vNewItem.SubItems.Add(fileDataArray[i].path); //third column
             end;
           end;
           ListView1.EndUpdate;
@@ -102,12 +102,11 @@ procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState)
 begin
     if Key =  VK_ESCAPE then
     begin
-//      Application.Minimize;
          Hide;
     end
     else if Key = VK_DOWN then
     begin
-      showmessage('down');
+      //showmessage('down');
     end;
 end;
 
@@ -119,8 +118,8 @@ begin
      listView1.Width:=Width - 10;
      listView1.Height:=Height - 85;
 
-     listView1.Column[0].Width:=200;
-     listView1.Column[1].Width:=200;
+     listView1.Column[0].Width:=200;  //file name
+     listView1.Column[1].Width:=50;   //file size
      listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 5;
 end;
 

@@ -67,7 +67,7 @@ begin
      if(Length(txt_Search.Text) > 3) then
      begin
           searchText := uppercase(txt_Search.Text);
-          fileDataArray := FileUnit.ReadFile ('a.txt');
+          fileDataArray := FileUnit.ReadAllFilesToDataArray ('input');
           //regex := TRegExpr.Create('.*'+searchText +'.*');
           ListView1.BeginUpdate;
           ListView1.Clear;
@@ -98,6 +98,8 @@ begin
      TrayIcon1.PopUpMenu:=sysTray_Popup_Menu;
      TrayIcon1.Icon:=Icon;
      TrayIcon1.Show;
+
+     //FileUnit.ReadAllFilesToDataArray ('input');
 end;
 
 procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

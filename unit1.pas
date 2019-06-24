@@ -55,6 +55,29 @@ implementation
 
 { TForm1 }
 
+function multiCriteriaMatch(aFileName:String; searchCriteria:String):boolean;
+var
+  i     : Integer;
+  split : TStringArray;
+  matchesFound : boolean;
+begin
+
+  matchesFound:=False;
+  split := searchCriteria.split(' ') ;
+//  showmessage(IntToStr(length(split)));
+  for i:=0 to length(split)-1 do
+  begin
+       if( AnsiContainsText(aFileName, split[i])) then
+            matchesFound:=True
+       else
+       begin
+            matchesFound:=False;
+            break;
+       end;
+  end;
+  multiCriteriaMatch:=matchesFound;
+end;
+
 procedure TForm1.txt_SearchChange(Sender: TObject);
 var
   i : integer;
@@ -78,9 +101,10 @@ begin
           ListView1.BeginUpdate;
           ListView1.Clear;
           ListView1.ReadOnly:=True;
-          for i:=0 to length(fileDataArray) do
+          for i:=0 to length(fileDataArray)-1 do
           begin
-            if( AnsiContainsText(fileDataArray[i].path, searchText)) then
+            //if( AnsiContainsText(fileDataArray[i].path, searchText)) then
+            if( multiCriteriaMatch(fileDataArray[i].path,  searchText) = True) then
             begin
                  temp := fileDataArray[i].path;
                  position1 := rpos('\',temp)+1;
@@ -157,7 +181,6 @@ procedure TForm1.sysTray_ShowClick(Sender: TObject);
 begin
   Show;
 end;
-
 
 end.
 

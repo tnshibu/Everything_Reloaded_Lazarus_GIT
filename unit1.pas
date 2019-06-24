@@ -133,9 +133,9 @@ begin
      listView1.Height:=Height - 85;
 
      listView1.Column[0].Width:=200;  //file name
-     listView1.Column[1].Width:=50;   //file size
+     listView1.Column[1].Width:=40;   //file size
      listView1.column[1].Alignment:=TAlignment.TARightJustify;  //file size is right aligned
-     listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 5;
+     listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 10;
 end;
 
 procedure TForm1.menu_ExitClick(Sender: TObject);

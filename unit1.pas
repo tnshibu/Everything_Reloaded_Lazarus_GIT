@@ -47,6 +47,7 @@ type
 
 var
   Form1: TForm1;
+  fileDataArray : TFileDataArray;
 
 implementation
 
@@ -54,9 +55,31 @@ implementation
 
 { TForm1 }
 
+function multiCriteriaMatch(aFileName:String; searchCriteria:String):boolean;
+var
+  i     : Integer;
+  split : TStringArray;
+  matchesFound : boolean;
+begin
+
+  matchesFound:=False;
+  split := searchCriteria.split(' ') ;
+//  showmessage(IntToStr(length(split)));
+  for i:=0 to length(split)-1 do
+  begin
+       if( AnsiContainsText(aFileName, split[i])) then
+            matchesFound:=True
+       else
+       begin
+            matchesFound:=False;
+            break;
+       end;
+  end;
+  multiCriteriaMatch:=matchesFound;
+end;
+
 procedure TForm1.txt_SearchChange(Sender: TObject);
 var
-  fileDataArray : TFileDataArray;
   i : integer;
   vNewItem: TListItem;
   searchText : String;
@@ -65,21 +88,27 @@ var
   position1 : integer;
   //regex: TRegExpr;
 begin
-     if(Length(txt_Search.Text) > 3) then
+     if(Length(txt_Search.Text) >= 3) then
      begin
           searchText := uppercase(txt_Search.Text);
-          fileDataArray := FileUnit.ReadAllFilesToDataArray ('input');
+          if fileDataArray = nil then
+          begin
+               fileDataArray := FileUnit.ReadAllFilesToDataArray ('input');
+          end;
+
+
           //regex := TRegExpr.Create('.*'+searchText +'.*');
           ListView1.BeginUpdate;
           ListView1.Clear;
           ListView1.ReadOnly:=True;
-          for i:=0 to length(fileDataArray) do
+          for i:=0 to length(fileDataArray)-1 do
           begin
-            if( AnsiContainsText(fileDataArray[i].path, searchText)) then
+            //if( AnsiContainsText(fileDataArray[i].path, searchText)) then
+            if( multiCriteriaMatch(fileDataArray[i].path,  searchText) = True) then
             begin
                  temp := fileDataArray[i].path;
                  position1 := rpos('\',temp)+1;
-                 nameOnly := ExtractSubstr(temp, position1,[' ']);
+                 nameOnly := ExtractSubstr(temp, position1,['\']);
                  vNewItem := ListView1.Items.Add;
                  vNewItem.Caption:=nameOnly; //first column
                  vNewItem.SubItems.Add(fileDataArray[i].size); //second column
@@ -128,8 +157,9 @@ begin
      listView1.Height:=Height - 85;
 
      listView1.Column[0].Width:=200;  //file name
-     listView1.Column[1].Width:=50;   //file size
-     listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 5;
+     listView1.Column[1].Width:=40;   //file size
+     listView1.column[1].Alignment:=TAlignment.TARightJustify;  //file size is right aligned
+     listView1.Column[2].Width:=listView1.Width - listView1.Column[0].Width - listView1.Column[1].Width - 10;
 end;
 
 procedure TForm1.menu_ExitClick(Sender: TObject);
@@ -151,7 +181,6 @@ procedure TForm1.sysTray_ShowClick(Sender: TObject);
 begin
   Show;
 end;
-
 
 end.
 

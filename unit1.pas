@@ -9,6 +9,8 @@ uses
   strutils,
   LCLType,
   RegExpr,
+  fphttpclient,
+  TypInfo, fpjson, jsonparser,
   ComCtrls, Menus, ExtCtrls, FileUnit;
 
 type
@@ -85,8 +87,16 @@ var
   searchText : String;
   temp : String;
   nameOnly : String;
+  url : String;
+  htmlString : String;
   position1 : integer;
   //regex: TRegExpr;
+
+
+  jData : TJSONData;
+  jItem : TJSONData;
+  j: Integer;
+  object_name, field_name, field_value, object_type, object_items: String;
 begin
      if(Length(txt_Search.Text) >= 3) then
      begin
@@ -103,7 +113,7 @@ begin
           ListView1.ReadOnly:=True;
           for i:=0 to length(fileDataArray)-1 do
           begin
-            //if( AnsiContainsText(fileDataArray[i].path, searchText)) then
+            (*
             if( multiCriteriaMatch(fileDataArray[i].path,  searchText) = True) then
             begin
                  temp := fileDataArray[i].path;
@@ -114,8 +124,40 @@ begin
                  vNewItem.SubItems.Add(fileDataArray[i].size); //second column
                  vNewItem.SubItems.Add(fileDataArray[i].path); //third column
             end;
+            *)
           end;
           ListView1.EndUpdate;
+
+          With TFPHttpClient.Create(Nil) do
+            try
+              searchText := StringReplace(searchText, ' ', '%20', [rfReplaceAll, rfIgnoreCase]);
+              url := 'http://127.0.0.1:8010/?search='+searchText+'&j=1';
+              htmlString := Get(url);
+              jData := GetJSON(htmlString);
+              for i := 0 to jData.Count - 1 do
+              begin
+                   jItem := jData.Items[i];
+
+                   object_type := GetEnumName(TypeInfo(TJSONtype), Ord(jItem.JSONType));
+                   object_name := TJSONObject(jData).Names[i];
+                   WriteStr(object_items, jItem.Count);
+
+                   ShowMessage('object type: ' + object_type + '|object name: ' + object_name + '|number of fields: ' + object_items);
+
+                   for j := 0 to jItem.Count - 1 do
+                   begin
+                     field_name := TJSONObject(jItem).Names[j];
+                     if(field_name = 'type') then
+                     begin
+                         ShowMessage(field_name);
+                         field_value := jItem.FindPath(TJSONObject(jItem).Names[j]).AsString;
+                         ShowMessage(field_name + '|' + field_value);
+                     end;
+                   end;
+              end;
+            finally
+              Free;
+            end;
      end
 end;
 
